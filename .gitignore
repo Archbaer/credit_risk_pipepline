@@ -1,0 +1,6 @@
+.env
+*.ipynb
+__pycache__/
+venv/
+.vscode/
+airflow.cfg

@@ -1,2 +1,2 @@
-# credit_risk_pipepline
+# Credit Risk Pipeline
 Credit default prediction pipeline

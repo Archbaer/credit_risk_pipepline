@@ -5,7 +5,13 @@ from typing import Iterable, Union
 
 
 def create_directories(paths: Iterable[Union[str, Path]]) -> None:
-    """Ensure each path exists. Accepts str or Path."""
+    """Ensure each path exists. Accepts str or Path.
+    
+    
+    
+    Parameters:
+    paths (Iterable[Union[str, Path]]): An iterable of directory paths to create. Accepts both str and Path types.
+    """
     if not paths:
         return
     
@@ -24,8 +30,9 @@ def prepare_batches() -> None:
 
     create_directories([os.path.join("..", "data", "batches")])
 
+    # 12 batches for 12 months
     for i in range(1, 13):
-        batch_path = os.path.join("..", "data", "batches", f"batch_2026_{i}.csv")
+        batch_path = os.path.join("..", "data", "batches", f"2026_{i}.csv")
         temp_df = df[i-1::12].reset_index(drop=True)
         temp_df.to_csv(batch_path, index=False)
     

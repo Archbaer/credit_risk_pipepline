@@ -3,7 +3,18 @@ import numpy as np
 from typing import Union
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler
-from __init__ import logger
+from pipelines.__init__ import logger
+
+def create_dir(path: Union[str, Path]) -> None:
+    """Ensure the directory at the given path exists. Accepts str or Path.
+    
+    Parameters:
+    path (Union[str, Path]): The directory path to create. Accepts both str and Path types.
+    """
+    if not path:
+        return
+    logger.info(f"Creating directory at: {path}")
+    Path(path).mkdir(parents=True, exist_ok=True)
 
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file into a DataFrame."""
@@ -22,15 +33,24 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
         pd.DataFrame: The preprocessed data.
     """
 
-    data = load_data(file_path)
-    data = data.drop(columns=['ID'])
+    try:
+        data = load_data(file_path)
+        logger.info("Preprocessing data...")
 
-    data = data.dropna()
-    data = data.drop_duplicates()
+        data = data.drop(columns=['ID'])
 
-    scaler = StandardScaler()
-    data = scaler.fit_transform(data)
+        data = data.dropna()
+        data = data.drop_duplicates()
+
+        scaler = StandardScaler()
+        data = scaler.fit_transform(data)
+        data = pd.DataFrame(data)
+    except Exception as e:
+        logger.error(f"Failed to preprocess data from {file_path}: {e}")
+        raise e
     
+    logger.info("Data preprocessing completed.")
+
     return data
 
 def save_preprocessed_data(data: np.array, output_path: Union[str, Path]) -> None:
@@ -41,8 +61,10 @@ def save_preprocessed_data(data: np.array, output_path: Union[str, Path]) -> Non
         data (pd.DataFrame): The preprocessed data.
         output_path (Union[str, Path]): The path to save the CSV file.
     """
+    path = Path(output_path).parent
+    create_dir(path)
+
     try:
-        data = pd.DataFrame(data)
         data.to_csv(output_path, index=False)
         logger.info(f"Preprocessed data saved to {output_path}")
     except Exception as e:

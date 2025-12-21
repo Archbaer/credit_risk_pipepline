@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from typing import Iterable, Union
 
-
 def create_directories(paths: Iterable[Union[str, Path]]) -> None:
     """Ensure each path exists. Accepts str or Path.
     
@@ -34,9 +33,4 @@ def prepare_batches() -> None:
     for i in range(1, 13):
         batch_path = os.path.join("..", "data", "batches", f"2026_{i}.csv")
         temp_df = df[i-1::12].reset_index(drop=True)
-        temp_df.to_csv(batch_path, index=False)
-    
-
-if __name__ == "__main__":
-    prepare_batches()
-    print("Batches prepared and saved successfully.")
+        temp_df.to_csv(batch_path, index=False)    

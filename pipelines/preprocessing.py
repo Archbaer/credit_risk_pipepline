@@ -32,12 +32,10 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The preprocessed data.
     """
-
+    target = None
     try:
         data = load_data(file_path)
         logger.info("Preprocessing data...")
-
-        data = data.drop(columns=['ID'])
 
         data = data.dropna()
         data = data.drop_duplicates()
@@ -53,7 +51,10 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
 
     return data
 
-def save_preprocessed_data(data: np.array, output_path: Union[str, Path]) -> None:
+def feature_engineering(data: pd.DataFrame) -> pd.DataFrame:
+    pass
+
+def save_preprocessed_data(data: Union[np.array, pd.DataFrame], output_path: Union[str, Path]) -> None:
     """
     Save the preprocessed data to a CSV file.
 
@@ -65,6 +66,7 @@ def save_preprocessed_data(data: np.array, output_path: Union[str, Path]) -> Non
     create_dir(path)
 
     try:
+        data = pd.DataFrame(data)
         data.to_csv(output_path, index=False)
         logger.info(f"Preprocessed data saved to {output_path}")
     except Exception as e:

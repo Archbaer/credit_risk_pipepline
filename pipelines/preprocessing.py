@@ -32,17 +32,24 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The preprocessed data.
     """
-    target = None
     try:
         data = load_data(file_path)
         logger.info("Preprocessing data...")
-
+        
+        # Dropping duplicates and na
         data = data.dropna()
         data = data.drop_duplicates()
 
         scaler = StandardScaler()
-        data = scaler.fit_transform(data)
-        data = pd.DataFrame(data)
+        data = data.drop(columns='ID', inplace=True)
+
+        y = data['default.payment.next.month']
+        x = data.drop(columns='default.payment.next.month')
+        x = scaler.fit_transform(x)
+
+        data = pd.DataFrame(x)
+        data['target_y'] = y
+
     except Exception as e:
         logger.error(f"Failed to preprocess data from {file_path}: {e}")
         raise e
@@ -51,8 +58,6 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
 
     return data
 
-def feature_engineering(data: pd.DataFrame) -> pd.DataFrame:
-    pass
 
 def save_preprocessed_data(data: Union[np.array, pd.DataFrame], output_path: Union[str, Path]) -> None:
     """
@@ -67,7 +72,7 @@ def save_preprocessed_data(data: Union[np.array, pd.DataFrame], output_path: Uni
 
     try:
         data = pd.DataFrame(data)
-        data.to_csv(output_path, index=False)
+        data.to_csv(output_path, index=False, header=False)
         logger.info(f"Preprocessed data saved to {output_path}")
     except Exception as e:
         logger.error(f"Failed to save preprocessed data to {output_path}: {e}")

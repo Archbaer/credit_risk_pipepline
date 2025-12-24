@@ -5,6 +5,7 @@ from typing import Union
 import pandas as pd
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
 import joblib
 
 def load_and_split(data_path: Union[str, Path], test_size=0.2, random_state=42):
@@ -31,6 +32,11 @@ def load_and_split(data_path: Union[str, Path], test_size=0.2, random_state=42):
     logger.info(f"Data loaded and split from {data_path}")
 
     return X_train, X_test, y_train, y_test
+
+def model_training(X_train: np.ndarray, y_train: np.ndarray):
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+    return model
 
 def save_model(model, model_path: Union[str, Path]) -> None:
     """Save the trained model to the specified path.

@@ -1,5 +1,6 @@
 import pandas as pd 
 import numpy as np
+import joblib
 from typing import Union
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler
@@ -22,7 +23,7 @@ def load_data(file_path: str) -> pd.DataFrame:
     
     return pd.read_csv(file_path)
 
-def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
+def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path]) -> pd.DataFrame:
     """
     Preprocess the data in order to prepare it for model training or evaluation in further steps.
 
@@ -50,13 +51,18 @@ def preprocess_data(file_path: Union[str, Path]) -> pd.DataFrame:
         data = pd.DataFrame(x)
         data['target_y'] = y
 
+        if scaler_path:
+            create_dir(Path(scaler_path).parent)
+            joblib.dump(scaler, scaler_path)
+            logger.info(f"Scaler saved at {scaler_path}")
+
     except Exception as e:
         logger.error(f"Failed to preprocess data from {file_path}: {e}")
         raise e
     
     logger.info("Data preprocessing completed.")
 
-    return data
+    return data, scaler
 
 
 def save_preprocessed_data(data: Union[np.array, pd.DataFrame], output_path: Union[str, Path]) -> None:

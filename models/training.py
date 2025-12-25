@@ -1,5 +1,6 @@
 from sklearn import train_test_split
 from pipelines.__init__ import logger
+from pipelines.preprocessing import create_dir
 from pathlib import Path
 from typing import Union 
 import pandas as pd
@@ -46,6 +47,7 @@ def save_model(model, model_path: Union[str, Path]) -> None:
         model_path (Union[str, Path]): The path where the model will be saved.
     """
     try:
+        create_dir(Path(model_path).parent)
         joblib.dump(model, model_path)
         logger.info(f"Model saved successfully at {model_path}")
     except Exception as e:

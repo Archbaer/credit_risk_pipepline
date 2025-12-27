@@ -1,4 +1,4 @@
-from sklearn import train_test_split
+from sklearn.model_selection import train_test_split
 from pipelines.__init__ import logger
 from pipelines.preprocessing import create_dir
 import mlflow
@@ -35,7 +35,7 @@ def load_and_split(data_path: Union[str, Path], test_size=0.2, random_state=42):
 
     return X_train, X_test, y_train, y_test
 
-def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, y_test: np.ndarray, estimators: int = 100) -> None:
+def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, y_test: np.ndarray, params: dict[str, Union[str, int, float]]) -> None:
     """
     Train a Random Forest Classifier and log the model and metrics to MLflow.
 
@@ -51,11 +51,13 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
     """
     mlflow.set_experiment("Credit_Risk_Classification_Training")
 
+    estimators = params.get("n_estimators", 100)
+    random_state = params.get("random_state", 42)
     run_name = f"RF_{estimators}_trees"
 
     with mlflow.start_run(run_name=run_name) as run:
         # Train the model
-        model = RandomForestClassifier(n_estimators=estimators, random_state=42)
+        model = RandomForestClassifier(n_estimators=estimators, random_state=random_state)
         model.fit(X_train, y_train)
         # Make predictions
         y_pred = model.predict(X_test)
@@ -68,17 +70,20 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
         precision = precision_score(y_test, y_pred)
 
         # Log parameters, metrics, and model to MLflow
-        mlflow.log_param("n_estimators", estimators)
+        mlflow.log_params(params)
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("roc_auc", roc_auc)
         mlflow.log_metric("f1_score", f1)
         mlflow.log_metric("recall", recall)
         mlflow.log_metric("precision", precision)
-        mlflow.log_model(model, "rf_model")
+        mlflow.sklearn.log_model(sk_model=model, name="rf_model")
         logger.info("Model training completed and logged to MLflow")
 
         # Save the scaler used during preprocessing
-        mlflow.log_artifact("scaler.pkl", artifact_path="preprocessing")
+        if Path("scaler.pkl").exists():
+            mlflow.log_artifact("scaler.pkl", artifact_path="preprocessing")
+        else:
+            logger.warning("Scaler file not found; skipping artifact logging for scaler.")
     
         # Register the model
         model_uri = f"runs:/{run.info.run_id}/rf_model"

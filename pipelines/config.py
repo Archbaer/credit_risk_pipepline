@@ -46,3 +46,20 @@ def load_config(file_path: Union[str, Path]) -> Dict[str, Union[str, int, float,
 
     config = load_yaml(file_path)
     return flatten_dict(config)
+
+def get_specific_configs(flat_config: Dict[str, Union[str, int, float, bool]], prefix: str) -> Dict[str, Union[str, int, float, bool]]:
+    """
+    Extract specific configurations from the flattened configuration dictionary based on a prefix.
+
+    Args:
+        flat_config (Dict[str, Union[str, int, float, bool]]): The flattened configuration dictionary.
+        prefix (str): The prefix to filter configurations.
+
+    Returns:
+        Dict[str, Union[str, int, float, bool]]: The filtered configuration dictionary.
+    """
+    specific_configs = {}
+    for k, v in flat_config.items():
+        if k.startswith(f"{prefix}."):
+            specific_configs[k.replace(f"{prefix}.", "")] = v
+    return specific_configs

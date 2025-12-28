@@ -53,11 +53,17 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
 
     estimators = params.get("n_estimators", 100)
     random_state = params.get("random_state", 42)
+    max_depth = params.get("max_depth", None)
+    min_samples_leaf = params.get("min_samples_leaf", 1)
     run_name = f"RF_{estimators}_trees"
 
     with mlflow.start_run(run_name=run_name) as run:
         # Train the model
-        model = RandomForestClassifier(n_estimators=estimators, random_state=random_state)
+        model = RandomForestClassifier(n_estimators=estimators, 
+                                       max_depth=max_depth,
+                                       min_samples_leaf=min_samples_leaf,
+                                       random_state=random_state,
+                                       n_jobs=-1)
         model.fit(X_train, y_train)
         # Make predictions
         y_pred = model.predict(X_test)

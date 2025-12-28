@@ -44,7 +44,7 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
         y_train (np.ndarray): Training labels.
         X_test (np.ndarray): Testing features.
         y_test (np.ndarray): Testing labels.
-        estimators (int): Number of trees in the Random Forest.
+        params (dict[str, Union[str, int, float]]): Hyperparameters for the Random Forest model.
     
     Returns:
         None
@@ -55,13 +55,16 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
     random_state = params.get("random_state", 42)
     max_depth = params.get("max_depth", None)
     min_samples_leaf = params.get("min_samples_leaf", 1)
+    min_samples_split = params.get("min_samples_split", 2)
     run_name = f"RF_{estimators}_trees"
 
     with mlflow.start_run(run_name=run_name) as run:
-        # Train the model
+
+        # Instantiate and train the model
         model = RandomForestClassifier(n_estimators=estimators, 
                                        max_depth=max_depth,
                                        min_samples_leaf=min_samples_leaf,
+                                       min_samples_split=min_samples_split,
                                        random_state=random_state,
                                        n_jobs=-1)
         model.fit(X_train, y_train)
@@ -96,7 +99,8 @@ def model_training(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
         mlflow.register_model(model_uri, "random_forest_model_registry")
 
 def save_model(model, model_path: Union[str, Path]) -> None:
-    """Save the trained model locally to the specified path.
+    """
+    Save the trained model locally to the specified path.
 
     Args:
         model: The trained model to be saved.

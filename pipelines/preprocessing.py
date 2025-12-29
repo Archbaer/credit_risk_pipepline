@@ -25,13 +25,16 @@ def load_data(file_path: str) -> pd.DataFrame:
 
 def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path]) -> pd.DataFrame:
     """
-    Preprocess the data in order to prepare it for model training or evaluation in further steps.
+    Preprocess the data in order to prepare it for model training or evaluation in further steps of the pipeline. Additionally, fits 
+    and saves a StandardScaler for future use.
 
     Args:
         file_path (Union[str, Path]): The path to the CSV file containing the data.
+        scaler_path (Union[str, Path]): The path to save the fitted StandardScaler.
     
     Returns:
         pd.DataFrame: The preprocessed data.
+        StandardScaler: The fitted StandardScaler object.
     """
     try:
         data = load_data(file_path)

@@ -24,13 +24,13 @@ def prepare_batches() -> None:
     Parameters:
     data (pd.DataFrame): The input DataFrame containing the credit data.
     """
-    data_path = os.path.join("..", "data", "raw", "credit_data.csv")
-    df = pd.read_csv(data_path)
+    batch_dir = "data/batches"
+    df = pd.read_csv("data/raw/credit_data.csv")
 
-    create_directories([os.path.join("..", "data", "batches")])
+    create_directories([batch_dir])
 
     # 12 batches for 12 months
     for i in range(1, 13):
-        batch_path = os.path.join("..", "data", "batches", f"2026_{i}.csv")
+        batch_path = os.path.join(batch_dir, f"2026_{i}.csv")
         temp_df = df[i-1::12].reset_index(drop=True)
         temp_df.to_csv(batch_path, index=False)    

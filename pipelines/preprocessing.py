@@ -23,7 +23,7 @@ def load_data(file_path: str) -> pd.DataFrame:
     
     return pd.read_csv(file_path)
 
-def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path]) -> pd.DataFrame:
+def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path], scaler: StandardScaler = None) -> pd.DataFrame:
     """
     Preprocess the data in order to prepare it for model training or evaluation in further steps of the pipeline. Additionally, fits 
     and saves a StandardScaler for future use.
@@ -44,12 +44,16 @@ def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path]) 
         data = data.dropna()
         data = data.drop_duplicates()
 
-        scaler = StandardScaler()
-        data = data.drop(columns='ID', inplace=True)
+        data = data.drop(columns='ID')
 
         y = data['default.payment.next.month']
         x = data.drop(columns='default.payment.next.month')
-        x = scaler.fit_transform(x)
+
+        if scaler is None:
+            scaler = StandardScaler()
+            x = scaler.fit_transform(x)
+        else:
+            x = scaler.transform(x)
 
         data = pd.DataFrame(x)
         data['target_y'] = y

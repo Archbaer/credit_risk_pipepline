@@ -6,3 +6,5 @@ logs/
 airflow.cfg
 */batches
 */processed
+mlflow.db
+scaler.pkl

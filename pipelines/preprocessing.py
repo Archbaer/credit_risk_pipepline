@@ -38,7 +38,7 @@ def preprocess_data(file_path: Union[str, Path], scaler_path: Union[str, Path], 
     """
     try:
         data = load_data(file_path)
-        logger.info("Preprocessing data...")
+        logger.info(f"Preprocessing data at {file_path}")
         
         # Dropping duplicates and na
         data = data.dropna()

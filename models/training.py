@@ -1,14 +1,16 @@
+from pathlib import Path
+from typing import Union
+
+import joblib
+import mlflow
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
+
 from pipelines.__init__ import logger
 from pipelines.preprocessing import create_dir
-import mlflow
-from pathlib import Path
-from typing import Union 
-import pandas as pd
-import numpy as np
-from sklearn.metrics import accuracy_score, roc_auc_score, f1_score, recall_score, precision_score
-from sklearn.ensemble import RandomForestClassifier
-import joblib
 
 def load_and_split(data_path: Union[str, Path], test_size=0.2, random_state=42):
     """

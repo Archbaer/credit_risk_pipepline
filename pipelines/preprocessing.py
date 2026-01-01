@@ -1,9 +1,11 @@
+from typing import Union
+from pathlib import Path
+
 import pandas as pd 
 import numpy as np
 import joblib
-from typing import Union
-from pathlib import Path
 from sklearn.preprocessing import StandardScaler
+
 from pipelines.__init__ import logger
 
 def create_dir(path: Union[str, Path]) -> None:

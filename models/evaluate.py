@@ -59,6 +59,12 @@ def make_prediction(model: RandomForestClassifier, scaler, input_data: Union[pd.
     Returns:
     - predictions: The predictions made by the model.
     """
+    if not isinstance(input_data, (pd.DataFrame, np.ndarray)):
+        logger.error("Input data must be a pandas DataFrame or a numpy ndarray.")
+        raise ValueError("Input data must be a pandas DataFrame or a numpy ndarray.")
+    elif not scaler:
+        logger.error("Scaler must be provided for data preprocessing.")
+        raise ValueError("Scaler must be provided for data preprocessing.")
 
     # Scale the input data with the same scaler used during training for consistency.
     scaled_data = scaler.transform(input_data)

@@ -13,7 +13,7 @@ from models.evaluate import get_best_model, make_prediction
 
 def preprocess_all_batches(batch_dir: Union[str, Path], processed_dir: Union[str, Path]) -> None:
     """
-    Preprocess all batch files in the specified directory and save the preprocessed data.
+    Preprocess all available files in the specified directory and save the preprocessed data.
 
     Args:
         batch_dir (Union[str, Path]): The directory containing the batch CSV files.

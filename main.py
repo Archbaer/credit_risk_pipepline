@@ -23,7 +23,7 @@ def preprocess_all_batches(batch_dir: Union[str, Path], processed_dir: Union[str
         None
     """
 
-    file_list = glob.glob(f'{batch_dir}/*.csv')
+    file_list = sorted(glob.glob(f'{batch_dir}/*.csv'))
 
     scaler = None
     count = 1 

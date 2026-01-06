@@ -1,16 +1,17 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict, Any
-from contextlib import asynccontextmanager
-from pipelines.__init__ import logger
-import pandas as pd
 import subprocess
+from contextlib import asynccontextmanager
+from typing import Dict
 
-from main import training_step, predictions
+import pandas as pd
+from fastapi import FastAPI, HTTPException, Response, status
+from pydantic import BaseModel
+
+from main import predictions, training_step
+from pipelines.__init__ import logger
 
 class PredictionRequest(BaseModel):
-    data: Dict[str, Any]
-
+    data: Dict[str, int | float]
+    
 def preprocessing_job():
     """
     Run the preprocessing script as a subprocess and log the output.
@@ -54,14 +55,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Credit Default Prediction API")
 
-@app.get("/predict")
-def predict(request: PredictionRequest):
+@app.post("/predict")
+def predict(request: PredictionRequest, response: Response):
     try:
-        
-        input_data = pd.DataFrame([request.data])
+        input_data = pd.DataFrame([request.model_dump()])
         preds = predictions(input_data)
+
+        response.status_code = status.HTTP_200_OK
         return {"predictions": preds.tolist()}
     
     except Exception as e:
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=400, detail=str(e))
+    
+@app.get("/health")
+def health_check(response: Response):
+    try:
+        response.status_code = status.HTTP_200_OK
+        return {"status": "API is running"}
+    except Exception as e:
+        logger.error(f"Health check error: {e}")
+        raise HTTPException(status_code=503, detail="Service Unavailable")

@@ -36,7 +36,9 @@ def preprocessing_job():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup actions 
-    app.state.script = preprocessing_job()
+    app.state.script = preprocessing_job() # Run preprocessing script
+    app.state.mlflow_ui = subprocess.Popen(['mlflow', 'ui', '--host', '0.0.0.0', '--port', '5000']) # Start MLflow UI
+
     training_step(
         config_path='config.yaml',
         data_path='data/preprocessed'
@@ -51,6 +53,14 @@ async def lifespan(app: FastAPI):
         except subprocess.TimeoutExpired:
             logger.warning("Preprocessing script did not terminate in time and was killed.")
             proc.kill()
+    
+    if app.state.mlflow_ui:
+        app.state.mlflow_ui.terminate()
+        try:
+            app.state.mlflow_ui.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            logger.warning("MLflow UI did not terminate in time and was killed.")
+            app.state.mlflow_ui.kill()
 
 
 app = FastAPI(title="Credit Default Prediction API")

@@ -4,12 +4,3 @@ services:
     ports:
       - "8000:8000"
       - "5000:5000"
-  #   environment:
-  #     - MLFLOW_TRACKING_URI=http://mlflow:5000
-  #   depends_on:
-  #     - mlflow
-  
-  # mlflow:
-  #   image: mlflow/mlflow:latest
-  #   ports:
-  #     - "5000:5000"

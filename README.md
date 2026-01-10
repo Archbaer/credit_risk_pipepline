@@ -112,3 +112,10 @@ Endpoint: /predict expects JSON with feature keys matching the training data. Ex
 ## Automation
 - preprocess.sh continuously prepares and preprocesses batches on a monthly interval (bash script; use WSL on Windows).
 
+## CI/CD Pipeline
+This project uses GitHub Actions to automatically build and push Docker images to Docker Hub on every push to the `main` branch or pull request.
+
+### Docker Hub Deployment
+- The workflow is defined in `.github/workflows/ci.yml`
+- Triggers on push or pull request to the `main` branch
+- Automatically builds the Docker image and pushes it to Docker Hub as `archbaer/credit_risk_pipeline:latest`
